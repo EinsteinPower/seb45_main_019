@@ -8,15 +8,25 @@ import {
   Button,
   IconButton
 } from '@mui/material';
-import { grey } from '@mui/material/colors';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAppSelector } from '../../redux/hooks';
 import Modal from '@mui/material/Modal';
 import React, { useState } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Word from '../Word/Word';
-import { word } from '../../common/data/wordData';
 
+const defaultTheme = createTheme({
+  components: {
+    MuiFormControlLabel: {
+      styleOverrides: {
+        label: {
+          fontSize: 14
+        }
+      }
+    }
+  }
+});
 const style = {
   position: 'absolute' as const,
   top: '50%',
@@ -39,46 +49,48 @@ export default function GuideBook() {
   const chapter = useAppSelector((state) => state.chapter);
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <div>
-        {chapter.wordId.map((el) => (
-          <div key={el}>
-            <Card sx={{ width: '100%', marginBottom: '40px' }}>
-              <CardHeader
-                action={
-                  <IconButton onClick={() => handleOpen(el)}>
-                    <SearchIcon sx={{ color: 'primary.main' }} />
-                  </IconButton>
-                }
+    <ThemeProvider theme={defaultTheme}>
+      <Box sx={{ width: '100%' }}>
+        <div>
+          {chapter.wordId.map((el) => (
+            <div key={el}>
+              <Box
+                sx={{
+                  width: '100%',
+                  marginBottom: '40px',
+                  backgroundColor: 'primary.main'
+                }}
+              >
+                <IconButton onClick={() => handleOpen(el)}>
+                  <SearchIcon sx={{ color: 'primary.main' }} />
+                </IconButton>
                 title={`단어 ID : ${el}`}
-                subheader="[발음기호]"
-              />
-              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  [발음기호]
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
                   1. 자본 2. 수도 3. 자금 4. 자산 5. 대문자
                 </Typography>
-              </CardContent>
-              <CardActions>
                 <Button>
                   <VolumeUpIcon />
                 </Button>
-              </CardActions>
-            </Card>
-          </div>
-        ))}
-        <Modal open={open} onClose={handleClose}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)'
-            }}
-          >
-            <Word wordId={selectedWordId}></Word>
-          </Box>
-        </Modal>
-      </div>
-    </Box>
+              </Box>
+            </div>
+          ))}
+          <Modal open={open} onClose={handleClose}>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              <Word wordId={selectedWordId}></Word>
+            </Box>
+          </Modal>
+        </div>
+      </Box>
+    </ThemeProvider>
   );
 }
